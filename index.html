@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>おえかきリレー｜キャンバス試作</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1f1c3d;
+  --bg:#2c2858;
+  --bg2:#3a3572;
+  --cream:#fff8e6;
+  --paper:#ffffff;
+  --yellow:#ffd23f;
+  --pink:#ff6b8b;
+  --mint:#4fd1a5;
+  --b:64px;      /* ボタンの大きさ（JSで画面に合わせて調整） */
+  --hd:64px;     /* ヘッダーの高さ */
+  --gap:10px;
+  --title:'Dela Gothic One','Hiragino Sans','Meiryo',sans-serif;
+  --body:'Zen Maru Gothic','Hiragino Maru Gothic ProN','Meiryo',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none}
+body{
+  font-family:var(--body);font-weight:700;color:var(--ink);
+  background-color:var(--bg);
+  background-image:radial-gradient(rgba(255,255,255,.07) 2px,transparent 2.5px);
+  background-size:22px 22px;
+  touch-action:none;user-select:none;-webkit-user-select:none;
+}
+#app{
+  width:100vw;height:100dvh;display:grid;
+  grid-template-rows:var(--hd) 1fr;
+  padding:10px 14px 14px;gap:10px;
+}
+
+/* ===== ヘッダー ===== */
+header{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{
+  font-family:var(--title);font-size:calc(var(--hd)*.46);line-height:1;
+  color:var(--yellow);letter-spacing:.04em;white-space:nowrap;
+  -webkit-text-stroke:calc(var(--hd)*.075) var(--ink);paint-order:stroke fill;
+  text-shadow:0 calc(var(--hd)*.07) 0 var(--ink);
+}
+.tag{
+  font-family:var(--title);font-size:13px;color:var(--ink);background:var(--mint);
+  border:3px solid var(--ink);border-radius:999px;padding:3px 12px;white-space:nowrap;
+  box-shadow:0 3px 0 var(--ink);
+}
+.spacer{flex:1}
+.chip{
+  height:calc(var(--hd)*.68);display:flex;align-items:center;gap:8px;
+  background:var(--cream);border:3px solid var(--ink);border-radius:14px;
+  padding:0 14px;box-shadow:0 4px 0 var(--ink);white-space:nowrap;font-size:15px;
+}
+.chip small{font-size:12px;color:#6b6790}
+.chip .dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--ink)}
+.chip b{font-family:var(--title);font-weight:400;font-size:15px;min-width:3.2em;text-align:right}
+
+/* ===== メイン ===== */
+main{display:grid;grid-template-columns:auto 1fr auto;gap:14px;min-height:0}
+.panel{
+  background:var(--cream);border:3px solid var(--ink);border-radius:20px;
+  box-shadow:0 6px 0 var(--ink);padding:12px 12px 16px;
+  display:flex;flex-direction:column;justify-content:center;gap:8px;align-self:center;
+}
+.plabel{
+  font-family:var(--title);font-size:14px;line-height:1;color:var(--cream);
+  background:var(--ink);border-radius:8px;padding:5px 0;text-align:center;
+}
+.grid3{display:grid;grid-template-columns:repeat(3,var(--b));gap:var(--gap);padding-bottom:6px}
+
+/* ===== ボタン（共通の手触り） ===== */
+.btn{
+  width:var(--b);height:var(--b);position:relative;
+  border:3px solid var(--ink);border-radius:16px;background:#fff;
+  box-shadow:0 6px 0 var(--ink);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  font-family:var(--body);font-weight:900;font-size:max(10px,calc(var(--b)*.18));color:var(--ink);
+  cursor:pointer;transition:transform .07s ease-out,box-shadow .07s ease-out,background .12s;
+  overflow:hidden;
+}
+.btn::after{ /* つやのハイライト */
+  content:"";position:absolute;left:14%;right:14%;top:5%;height:13%;
+  border-radius:999px;background:rgba(255,255,255,.6);pointer-events:none;z-index:0;
+}
+.btn > *{position:relative;z-index:1}
+.btn svg{width:calc(var(--b)*.42);height:calc(var(--b)*.42);flex:none}
+.btn span{line-height:1;white-space:nowrap}
+.btn.press{transform:translateY(5px);box-shadow:0 1px 0 var(--ink)}
+.btn.on{background:var(--yellow)}
+.btn:disabled{opacity:.38;cursor:default}
+.btn.danger{background:#ffe1e6}
+
+/* 色ボタン */
+.sw{background:#fff}
+.sw i{width:58%;height:58%;border-radius:50%;border:3px solid var(--ink);display:block}
+.sw.on{background:var(--yellow)}
+.sw.on i{box-shadow:0 0 0 3px #fff inset}
+
+/* 太さボタン */
+.sz em{width:calc(var(--b)*.42);height:calc(var(--b)*.42);display:flex;align-items:center;justify-content:center;flex:none}
+.sz i{background:var(--ink);border-radius:50%;display:block}
+
+/* ===== キャンバス ===== */
+#stage{position:relative;min-width:0;min-height:0;display:flex;align-items:center;justify-content:center}
+#paperWrap{
+  position:relative;background:var(--paper);
+  border:4px solid var(--ink);border-radius:18px;box-shadow:0 8px 0 var(--ink);
+  overflow:hidden;
+}
+#paperWrap canvas{display:block;width:100%;height:100%;touch-action:none;cursor:none}
+#cursor{
+  position:absolute;left:0;top:0;border-radius:50%;pointer-events:none;
+  border:2px solid rgba(31,28,61,.7);box-shadow:0 0 0 1px rgba(255,255,255,.9);
+  transform:translate(-50%,-50%);display:none;
+}
+
+/* ===== モーダル ===== */
+.modal{
+  position:fixed;inset:0;background:rgba(20,17,45,.72);display:none;
+  align-items:center;justify-content:center;z-index:10;
+}
+.modal.show{display:flex}
+.card{
+  background:var(--cream);border:4px solid var(--ink);border-radius:22px;
+  box-shadow:0 8px 0 var(--ink);padding:22px 26px 26px;
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+  max-width:calc(100vw - 40px);max-height:calc(100dvh - 40px);
+  animation:pop .18s ease-out;
+}
+@keyframes pop{from{transform:scale(.88);opacity:0}to{transform:scale(1);opacity:1}}
+.card h2{font-family:var(--title);font-weight:400;font-size:24px}
+.card p{font-size:15px;text-align:center;line-height:1.6}
+.card img{width:min(420px,60vw);aspect-ratio:3/2;border:3px solid var(--ink);border-radius:12px;background:#fff;display:block}
+.row{display:flex;gap:14px}
+.wbtn{ /* 横長ボタン（モーダル用、すべて同じ大きさ） */
+  width:150px;height:56px;border:3px solid var(--ink);border-radius:16px;
+  box-shadow:0 6px 0 var(--ink);background:#fff;
+  font-family:var(--title);font-size:18px;color:var(--ink);cursor:pointer;
+  transition:transform .07s ease-out,box-shadow .07s ease-out;
+}
+.wbtn.press{transform:translateY(5px);box-shadow:0 1px 0 var(--ink)}
+.wbtn.red{background:var(--pink);color:#fff;-webkit-text-stroke:0}
+.wbtn.yel{background:var(--yellow)}
+.stat{display:grid;grid-template-columns:auto auto;gap:4px 18px;font-size:15px}
+.stat dt{color:#6b6790}
+.stat dd{font-family:var(--title);font-weight:400;text-align:right}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="logo">おえかきリレー</div>
+    <div class="tag">キャンバス試作 v0.1</div>
+    <div class="spacer"></div>
+    <div class="chip"><small>いま</small><span class="dot" id="curDot"></span><span id="curText">ペン・ふつう</span></div>
+    <div class="chip"><small>にゅうりょく</small><b id="inType">ー</b></div>
+    <div class="chip"><small>ひつあつ</small><b id="inPress">ー</b></div>
+  </header>
+
+  <main>
+    <!-- 左：いろ・ふとさ -->
+    <section class="panel" id="leftPanel">
+      <div class="plabel">いろ</div>
+      <div class="grid3" id="colors"></div>
+      <div class="plabel">ふとさ</div>
+      <div class="grid3" id="sizes"></div>
+    </section>
+
+    <!-- 中央：キャンバス -->
+    <section id="stage">
+      <div id="paperWrap">
+        <canvas id="cv" width="1200" height="800"></canvas>
+        <div id="cursor"></div>
+      </div>
+    </section>
+
+    <!-- 右：どうぐ -->
+    <section class="panel" id="rightPanel">
+      <div class="plabel">どうぐ</div>
+      <div class="grid3">
+        <button class="btn tool on" id="tPen" data-snd="sel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.2-4.6L16 4.6a2 2 0 0 1 2.8 0l.6.6a2 2 0 0 1 0 2.8L8.6 18.8z"/><path d="M14 6.6l3.4 3.4"/></svg>
+          <span>ペン</span></button>
+        <button class="btn tool" id="tEraser" data-snd="sel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 20H20"/><path d="M5.2 15.8l9.6-9.6a2 2 0 0 1 2.8 0l2.2 2.2a2 2 0 0 1 0 2.8L12 19.1a3 3 0 0 1-4.2 0l-2.6-2.6a.5.5 0 0 1 0-.7z"/><path d="M9.5 11.5l5 5"/></svg>
+          <span>けしゴム</span></button>
+        <button class="btn danger" id="bClear" data-snd="act">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4.5h6V7"/><path d="M6.5 7l1 13h9l1-13"/><path d="M10 11v5.5M14 11v5.5"/></svg>
+          <span>ぜんけし</span></button>
+      </div>
+      <div class="plabel">そうさ</div>
+      <div class="grid3">
+        <button class="btn " id="bUndo" data-snd="act">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+          <span>もどす</span></button>
+        <button class="btn " id="bRedo" data-snd="act">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg>
+          <span>すすむ</span></button>
+        <button class="btn " id="bSave" data-snd="act">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><path d="M3.5 15.5l4.5-4.5 4 4 2.5-2.5 6 6"/><circle cx="15.5" cy="9.5" r="1.6"/></svg>
+          <span>ほぞん</span></button>
+      </div>
+      <div class="plabel">せってい</div>
+      <div class="grid3">
+        <button class="btn " id="bPenOnly" data-snd="sel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v11"/><path d="M9 14h6l-3 7z"/><path d="M9.5 3h5"/></svg>
+          <span>ペンだけ</span></button>
+        <button class="btn on" id="bPress" data-snd="sel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17c3 0 3-4 6-4s3 6 6 6 3-8 6-8"/><circle cx="21" cy="11" r="0.6"/></svg>
+          <span>ひつあつ</span></button>
+        <button class="btn on" id="bSound" data-snd="sel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>
+          <span>おと</span></button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ぜんけし確認 -->
+<div class="modal" id="mClear">
+  <div class="card">
+    <h2>ぜんぶ けす？</h2>
+    <p>かいた絵が ぜんぶ きえます。<br>「もどす」で とりもどせます。</p>
+    <div class="row">
+      <button class="wbtn" id="cNo" data-snd="act">やめる</button>
+      <button class="wbtn red" id="cYes" data-snd="act">けす</button>
+    </div>
+  </div>
+</div>
+
+<!-- ほぞんテスト -->
+<div class="modal" id="mSave">
+  <div class="card">
+    <h2>ほぞんテスト</h2>
+    <img id="svImg" alt="">
+    <dl class="stat">
+      <dt>形式</dt><dd id="svFmt">-</dd>
+      <dt>この絵1まいの大きさ</dt><dd id="svKB">-</dd>
+      <dt>10人×5試合ぶん（50まい）</dt><dd id="svMB">-</dd>
+    </dl>
+    <div class="row">
+      <button class="wbtn yel" id="svOk" data-snd="act">とじる</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const W = 1200, H = 800;
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+const wrap = document.getElementById('paperWrap');
+const stage = document.getElementById('stage');
+const cursorEl = document.getElementById('cursor');
+
+/* ---------- 設定 ---------- */
+const COLORS = [
+  ['くろ','#23213a'],['グレー','#9a98a8'],
+  ['あか','#e8434b'],['ピンク','#f28bb6'],
+  ['オレンジ','#f59331'],['はだいろ','#f6cfa6'],
+  ['きいろ','#f7cc2e'],['みどり','#3db66b'],
+  ['みずいろ','#5ec8ef'],['あお','#3a6fe0'],
+  ['むらさき','#8e55d0'],['ちゃいろ','#9a6235'],
+];
+const SIZES = [['ほそい',5],['ふつう',13],['ふとい',34]];
+
+const st = {
+  tool:'pen', color:COLORS[0][1], colorName:COLORS[0][0],
+  size:SIZES[1][1], sizeName:SIZES[1][0],
+  penOnly:false, pressure:true, sound:true,
+};
+let strokes = [], redoStack = [], cur = null, activeId = null;
+
+/* ---------- おと（WebAudioで合成。ファイル不要） ---------- */
+let ac = null;
+function blip(kind){
+  if(!st.sound) return;
+  try{
+    ac = ac || new (window.AudioContext||window.webkitAudioContext)();
+    const t = ac.currentTime, o = ac.createOscillator(), g = ac.createGain();
+    const f = kind==='sel' ? [660,990] : [440,520];
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(f[0],t);
+    o.frequency.exponentialRampToValueAtTime(f[1],t+.06);
+    g.gain.setValueAtTime(.0001,t);
+    g.gain.exponentialRampToValueAtTime(.18,t+.008);
+    g.gain.exponentialRampToValueAtTime(.0001,t+.11);
+    o.connect(g).connect(ac.destination); o.start(t); o.stop(t+.12);
+  }catch(e){}
+}
+
+/* ---------- ボタンの手触り（押しこみ＋おと） ---------- */
+document.addEventListener('pointerdown', e => {
+  const b = e.target.closest('.btn,.wbtn');
+  if(!b || b.disabled) return;
+  b.classList.add('press'); blip(b.dataset.snd||'act');
+  const up = () => { b.classList.remove('press'); removeEventListener('pointerup',up); removeEventListener('pointercancel',up); };
+  addEventListener('pointerup',up); addEventListener('pointercancel',up);
+});
+
+/* ---------- パネル生成 ---------- */
+const colorBox = document.getElementById('colors');
+COLORS.forEach(([name,hex],i) => {
+  const b = document.createElement('button');
+  b.className = 'btn sw' + (i===0?' on':''); b.dataset.snd='sel'; b.title=name;
+  b.innerHTML = `<i style="background:${hex}"></i>`;
+  b.onclick = () => {
+    colorBox.querySelectorAll('.sw').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    st.color = hex; st.colorName = name; setTool('pen');
+  };
+  colorBox.appendChild(b);
+});
+const sizeBox = document.getElementById('sizes');
+SIZES.forEach(([name,px],i) => {
+  const b = document.createElement('button');
+  b.className = 'btn sz' + (i===1?' on':''); b.dataset.snd='sel';
+  const d = [7,14,24][i];
+  b.innerHTML = `<em><i style="width:${d}px;height:${d}px"></i></em><span>${name}</span>`;
+  b.onclick = () => {
+    sizeBox.querySelectorAll('.sz').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    st.size = px; st.sizeName = name; refreshStatus();
+  };
+  sizeBox.appendChild(b);
+});
+
+const $ = id => document.getElementById(id);
+function setTool(t){
+  st.tool = t;
+  $('tPen').classList.toggle('on', t==='pen');
+  $('tEraser').classList.toggle('on', t==='eraser');
+  refreshStatus();
+}
+$('tPen').onclick = () => setTool('pen');
+$('tEraser').onclick = () => setTool('eraser');
+$('bPenOnly').onclick = () => { st.penOnly = !st.penOnly; $('bPenOnly').classList.toggle('on', st.penOnly); };
+$('bPress').onclick = () => { st.pressure = !st.pressure; $('bPress').classList.toggle('on', st.pressure); };
+$('bSound').onclick = () => { st.sound = !st.sound; $('bSound').classList.toggle('on', st.sound); };
+
+function refreshStatus(){
+  $('curDot').style.background = st.tool==='eraser' ? '#fff' : st.color;
+  $('curText').textContent = (st.tool==='eraser' ? 'けしゴム' : st.colorName) + '・' + st.sizeName;
+  $('bUndo').disabled = strokes.length===0;
+  $('bRedo').disabled = redoStack.length===0;
+}
+
+/* ---------- 描画エンジン ---------- */
+function paperFill(c){ c.fillStyle='#fff'; c.fillRect(0,0,W,H); }
+function strokeColor(s){ return s.tool==='eraser' ? '#ffffff' : s.color; }
+
+function drawDot(c,s,p){
+  c.fillStyle = strokeColor(s);
+  c.beginPath(); c.arc(p[0],p[1],p[2]/2,0,Math.PI*2); c.fill();
+}
+// i番目の点までの区間を、なめらかな曲線で描く
+function drawSeg(c,s,i){
+  const P = s.pts; if(i<1) return;
+  const p0 = P[i-2]||P[i-1], p1 = P[i-1], p2 = P[i];
+  const m0 = [(p0[0]+p1[0])/2,(p0[1]+p1[1])/2];
+  const m1 = [(p1[0]+p2[0])/2,(p1[1]+p2[1])/2];
+  c.strokeStyle = strokeColor(s);
+  c.lineWidth = (p1[2]+p2[2])/2;
+  c.lineCap='round'; c.lineJoin='round';
+  c.beginPath(); c.moveTo(m0[0],m0[1]); c.quadraticCurveTo(p1[0],p1[1],m1[0],m1[1]); c.stroke();
+}
+function drawStroke(c,s){
+  drawDot(c,s,s.pts[0]);
+  for(let i=1;i<s.pts.length;i++) drawSeg(c,s,i);
+  // 最後のはしっこ
+  const n=s.pts.length; if(n>1){
+    const a=s.pts[n-2], b=s.pts[n-1];
+    c.strokeStyle=strokeColor(s); c.lineWidth=b[2]; c.lineCap='round';
+    c.beginPath(); c.moveTo((a[0]+b[0])/2,(a[1]+b[1])/2); c.lineTo(b[0],b[1]); c.stroke();
+  }
+}
+// 「ぜんけし」は印として記録し、最後の印より後だけを描く（もどすで復活できる）
+function renderAll(){
+  paperFill(ctx);
+  let start = 0;
+  strokes.forEach((s,i)=>{ if(s.tool==='clear') start=i+1; });
+  for(let i=start;i<strokes.length;i++) drawStroke(ctx,strokes[i]);
+}
+
+function toLocal(e){
+  const r = cv.getBoundingClientRect();
+  return [(e.clientX-r.left)*W/r.width, (e.clientY-r.top)*H/r.height];
+}
+function widthFor(e, prevW){
+  let w = st.size;
+  if(st.pressure && st.tool==='pen' && e.pointerType==='pen' && e.pressure>0){
+    const target = st.size*(0.35+e.pressure*1.05);
+    w = prevW==null ? target : prevW*0.6 + target*0.4;
+  }
+  return Math.max(1.5,w);
+}
+function showInput(e){
+  $('inType').textContent = {pen:'ペン',touch:'ゆび',mouse:'マウス'}[e.pointerType]||e.pointerType;
+  $('inPress').textContent = e.pointerType==='pen' ? e.pressure.toFixed(2) : 'ー';
+}
+
+cv.addEventListener('pointerdown', e => {
+  showInput(e);
+  if(activeId!==null) return;                          // 2本目の指・手のひらは無視
+  if(st.penOnly && e.pointerType==='touch') return;    // ペンだけモード
+  if(e.pointerType==='mouse' && e.button!==0) return;
+  e.preventDefault();
+  activeId = e.pointerId; try{ cv.setPointerCapture(e.pointerId); }catch(_){}
+  const [x,y] = toLocal(e);
+  cur = {tool:st.tool, color:st.color, pts:[[x,y,widthFor(e)]]};
+  drawDot(ctx,cur,cur.pts[0]);
+});
+cv.addEventListener('pointermove', e => {
+  moveCursor(e);
+  if(e.pointerId!==activeId || !cur) return;
+  showInput(e);
+  const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+  for(const ev of (evs.length?evs:[e])){
+    const [x,y] = toLocal(ev);
+    const last = cur.pts[cur.pts.length-1];
+    if(Math.hypot(x-last[0],y-last[1]) < 1.5) continue;
+    cur.pts.push([x,y,widthFor(ev,last[2])]);
+    drawSeg(ctx,cur,cur.pts.length-1);
+  }
+});
+function endStroke(e){
+  if(e.pointerId!==activeId) return;
+  activeId = null;
+  if(cur){ strokes.push(cur); redoStack=[]; cur=null; renderAll(); refreshStatus(); }
+}
+cv.addEventListener('pointerup', endStroke);
+cv.addEventListener('pointercancel', endStroke);
+
+/* 太さが見えるカーソル（ペンのホバー・マウス） */
+function moveCursor(e){
+  if(e.pointerType==='touch'){ cursorEl.style.display='none'; return; }
+  const r = cv.getBoundingClientRect();
+  const d = Math.max(6, st.size*r.width/W);
+  cursorEl.style.display='block';
+  cursorEl.style.width = cursorEl.style.height = d+'px';
+  cursorEl.style.left = (e.clientX-r.left)+'px';
+  cursorEl.style.top  = (e.clientY-r.top)+'px';
+}
+cv.addEventListener('pointerleave', ()=>{ cursorEl.style.display='none'; });
+
+/* ---------- そうさ ---------- */
+$('bUndo').onclick = () => { if(!strokes.length) return; redoStack.push(strokes.pop()); renderAll(); refreshStatus(); };
+$('bRedo').onclick = () => { if(!redoStack.length) return; strokes.push(redoStack.pop()); renderAll(); refreshStatus(); };
+
+$('bClear').onclick = () => { if(strokes.length) $('mClear').classList.add('show'); };
+$('cNo').onclick = () => $('mClear').classList.remove('show');
+$('cYes').onclick = () => {
+  if(strokes.length) strokes.push({tool:'clear', pts:[]});
+  $('mClear').classList.remove('show'); renderAll(); refreshStatus();
+};
+/* ほぞんテスト：履歴保存のサイズ見積もり（縮小WebP） */
+$('bSave').onclick = () => {
+  const t = document.createElement('canvas'); t.width=600; t.height=400;
+  const tc = t.getContext('2d'); tc.drawImage(cv,0,0,600,400);
+  let url = t.toDataURL('image/webp',0.8);
+  let fmt = 'WebP';
+  if(!url.startsWith('data:image/webp')){ url = t.toDataURL('image/jpeg',0.8); fmt='JPEG'; }
+  const kb = Math.round(url.length*0.75/1024*10)/10;
+  $('svImg').src = url; $('svFmt').textContent = fmt+'（600×400）';
+  $('svKB').textContent = kb+' KB';
+  $('svMB').textContent = 'やく '+(kb*50/1024).toFixed(2)+' MB';
+  $('mSave').classList.add('show');
+};
+$('svOk').onclick = () => $('mSave').classList.remove('show');
+
+/* ---------- 画面サイズに合わせる ---------- */
+function fit(){
+  const vh = window.innerHeight;
+  const hd = Math.round(Math.min(72, Math.max(48, vh*0.085)));
+  const root = document.documentElement.style;
+  root.setProperty('--hd', hd+'px');
+  // パネルが入りきるいちばん大きいボタンサイズを実際に測って決める
+  const mainEl = document.querySelector('main');
+  const panels = [...document.querySelectorAll('.panel')];
+  panels.forEach(p=>p.style.height='auto');
+  let b = 64;
+  for(; b>50; b--){
+    root.setProperty('--b', b+'px');
+    root.setProperty('--gap', Math.round(b*0.16)+'px');
+    const need = Math.max(...panels.map(p=>p.getBoundingClientRect().height));
+    const sr = stage.getBoundingClientRect();
+    const paperH = Math.min(sr.width*2/3, sr.height-10);
+    if(need + 8 <= mainEl.getBoundingClientRect().height && need <= paperH + 2) break;
+  }
+  requestAnimationFrame(()=>{
+    const r = stage.getBoundingClientRect();
+    const availW = r.width, availH = r.height - 10;
+    let w = availW, h = w*2/3;
+    if(h > availH){ h = availH; w = h*3/2; }
+    wrap.style.width = Math.floor(w)+'px';
+    wrap.style.height = Math.floor(h)+'px';
+    // 左右パネルの高さを紙とそろえる（中身が入りきらないときは中身に合わせる）
+    document.querySelectorAll('.panel').forEach(p=>{
+      p.style.height='auto';
+      p.style.height = Math.max(Math.floor(h), p.scrollHeight+6)+'px';
+    });
+  });
+}
+addEventListener('resize', fit);
+new ResizeObserver(fit).observe(stage);
+
+/* ---------- 事故防止 ---------- */
+addEventListener('contextmenu', e=>e.preventDefault());
+addEventListener('beforeunload', e=>{ if(strokes.length){ e.preventDefault(); e.returnValue=''; } });
+document.addEventListener('gesturestart', e=>e.preventDefault());
+
+fit(); renderAll(); refreshStatus();
+})();
+</script>
+</body>
+</html>
