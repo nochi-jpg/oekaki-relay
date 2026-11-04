@@ -281,6 +281,82 @@ main{display:grid;grid-template-columns:auto 1fr auto;gap:14px;min-height:0}
 /* お題・ことばは読みやすい教科書体 */
 .prBig,.taskbox b,.rbox .say,.lc .bx.topic,.lc .bx.word{font-family:var(--kyo);font-weight:700}
 .taskbox b{font-size:calc(var(--hd)*.5)}
+/* ===== スマホ縦画面（GitHub版のみ） ===== */
+body.tate #app{padding:8px 10px 10px;gap:8px}
+body.tate header .logo, body.tate header .chip:not(.timer){display:none}
+body.tate .taskbox{padding:0 10px;gap:8px}
+body.tate main{display:flex;flex-direction:column;align-items:center;gap:8px}
+body.tate #stage{width:100%;flex:none}
+body.tate .panel{width:100%;align-self:stretch;height:auto;padding:8px 8px 12px;gap:var(--gap);box-shadow:0 4px 0 var(--ink)}
+body.tate .plabel{display:none}
+body.tate #leftPanel{display:grid;grid-template-columns:repeat(2,calc(3*var(--b) + 2*var(--gap)));justify-content:center;align-items:center;column-gap:var(--gap)}
+body.tate #colors,body.tate #proColors{grid-column:1/-1;justify-self:center}
+body.tate #colors{grid-template-columns:repeat(6,var(--b));padding-bottom:2px}
+body.tate .pro{grid-template-columns:repeat(12,1fr);grid-template-rows:repeat(4,1fr);gap:3px;
+  width:calc(6*var(--b) + 5*var(--gap));height:calc(2*var(--b) + var(--gap) + 2px);padding-bottom:2px}
+body.tate .seg{margin:0}
+body.tate #sizes{padding-bottom:0}
+body.tate #rightPanel{display:grid;grid-template-columns:repeat(6,var(--b));justify-content:center}
+body.tate #rightPanel .grid3{display:contents}
+body.tate .btn{font-size:max(9px,calc(var(--b)*.18))}
+body.tate .btn svg{width:calc(var(--b)*.4);height:calc(var(--b)*.4)}
+body.tate #rightPanel .wbtn.done{grid-column:span 3;width:auto;height:var(--b);margin:0;font-size:17px}
+body.tate .card{padding:16px 14px 18px;gap:10px;max-width:calc(100vw - 20px);max-height:calc(100dvh - 20px);overflow-y:auto}
+body.tate .row{flex-wrap:wrap;justify-content:center;gap:10px}
+body.tate .wbtn{width:calc((100vw - 84px)/3);font-size:16px}
+body.tate .setup{gap:8px;padding:12px 12px 16px}
+body.tate .setup h2{font-size:20px}
+body.tate .wbtn.opt{height:42px;font-size:15px}
+body.tate .wbtn.opt[data-time]{width:calc((100vw - 104px)/5)}
+body.tate .names{gap:4px 8px}
+body.tate .names input{height:34px;font-size:15px}
+body.tate .setup .tin{height:40px}
+body.tate .taskbox small{display:none}
+body.tate .taskbox b{font-size:17px;line-height:1.15;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+body.tate .wbtn.sq{width:48px}
+body.tate .wbtn.big{width:calc(100vw - 80px)}
+body.tate .wbtn.hist{width:calc(100vw - 60px);font-size:14px}
+body.tate .biglogo{width:86vw;height:auto;max-height:20dvh;object-fit:contain}
+body.tate .modes{flex-direction:column;gap:16px}
+body.tate .mode{width:86vw;height:92px}
+body.tate #sTitle{gap:20px}
+body.tate #sTitle .wbtn{width:calc((86vw - 20px)/3)}
+body.tate .row:has(.opt) .lbl{width:100%;text-align:center}
+body.tate .names{grid-template-columns:repeat(2,1fr);width:calc(100vw - 48px)}
+body.tate .names input{width:100%}
+body.tate .tin{width:calc(100vw - 60px)}
+body.tate .huge{font-size:34px !important}
+body.tate .pcard{min-width:0;width:calc(100vw - 20px)}
+body.tate .prBig{font-size:clamp(28px,9vw,48px)}
+body.tate .prBig span, body.tate .rbox .say span, body.tate .lc .bx span{display:inline}
+body.tate .wimg{width:auto;height:min(calc(100dvh - 330px),calc((100vw - 48px)*4/3));aspect-ratio:3/4;object-fit:contain}
+body.tate #prImg{height:min(calc(100dvh - 300px),calc((100vw - 48px)*4/3))}
+body.tate #sWrite .row.center:last-child{flex-direction:column-reverse}
+body.tate .col{width:100%}
+body.tate .shout{font-size:8vw;-webkit-text-stroke:5px var(--ink)}
+body.tate #sOrder .row{flex-direction:column;align-items:center}
+body.tate .rvTop{max-width:calc(100vw - 48px)}
+body.tate .card h2.rvTitle{font-size:17px}
+body.tate .rbox{width:calc(100vw - 48px);height:min(calc(100dvh - 230px),calc((100vw - 48px)*4/3))}
+body.tate .rbox .say{font-size:28px}
+body.tate .curtain{font-size:90px}
+body.tate .stamp{font-size:22px;right:10px;bottom:10px}
+body.tate .listscr{padding:10px 10px 12px}
+body.tate .lsTop{flex-wrap:wrap;gap:8px}
+body.tate .lsTop h2{width:100%;font-size:17px}
+body.tate .lsTop .spacer{display:none}
+body.tate .lsTop .wbtn{width:calc((100vw - 36px)/3);height:48px}
+.wbtn.nm{width:150px;height:48px;font-size:15px}
+.npick{height:40px;width:240px;border:3px solid var(--ink);border-radius:12px;background:#fff;box-shadow:0 3px 0 var(--ink);
+  font-family:var(--body);font-weight:900;font-size:16px;color:var(--ink);display:flex;align-items:center;gap:8px;padding:0 10px;
+  cursor:pointer;white-space:nowrap;overflow:hidden;transition:transform .06s ease-out,box-shadow .06s ease-out}
+.npick.press{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.npick i{font-style:normal;font-family:var(--title);width:24px;height:24px;border-radius:50%;background:#e9e6f5;color:#8a86a8;
+  display:flex;align-items:center;justify-content:center;font-size:13px;flex:none}
+.npick.on{background:var(--yellow)}
+.npick.on i{background:var(--ink);color:var(--yellow)}
+body.tate .names .npick{width:100%;height:34px;font-size:15px}
+body.tate .wbtn.nm{height:42px;font-size:14px;width:calc((100vw - 84px)/3)}
 </style>
 </head>
 <body>
@@ -372,7 +448,9 @@ main{display:grid;grid-template-columns:auto 1fr auto;gap:14px;min-height:0}
 
 <div class="screen" id="sSetup"><div class="card setup">
   <h2 id="setupTitle"></h2>
-  <div class="row center"><span class="lbl">にんずう</span><button class="wbtn sq" id="pMinus" data-snd="sel">−</button><b class="num" id="pNum">4</b><button class="wbtn sq" id="pPlus" data-snd="sel">＋</button></div>
+  <div class="row center"><span class="lbl">にんずう</span><button class="wbtn sq" id="pMinus" data-snd="sel">−</button><b class="num" id="pNum">4</b><button class="wbtn sq" id="pPlus" data-snd="sel">＋</button>
+    <button class="wbtn nm" id="nOrder" data-snd="sel">じゅんばん</button><button class="wbtn nm" id="nReset" data-snd="act">なまえリセット</button></div>
+  <p class="small hide" id="nHint">あたらしい じゅんばんに なまえを おしてね</p>
   <div class="names" id="names"></div>
   <div class="row center"><span class="lbl">おだい</span>
     <button class="wbtn opt" data-topic="easy" data-snd="sel">かんたん</button>
@@ -451,7 +529,9 @@ main{display:grid;grid-template-columns:auto 1fr auto;gap:14px;min-height:0}
 <script>
 (() => {
 'use strict';
-const W = 1200, H = 800;
+// スマホ（短い辺が600px未満のタッチ端末）で起動したときだけ、縦長の紙（3:4）とスマホ用の配置にする
+const PHONE = false; // Canva版はスマホ用の配置を使わない
+const W = PHONE ? 900 : 1200, H = PHONE ? 1200 : 800;
 const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d');
 const wrap = document.getElementById('paperWrap');
@@ -510,7 +590,7 @@ function blip(kind){
 
 /* ---------- ボタンの手触り（押しこみ＋おと） ---------- */
 document.addEventListener('pointerdown', e => {
-  const b = e.target.closest('.btn,.wbtn,.pc,.mode');
+  const b = e.target.closest('.btn,.wbtn,.pc,.mode,.npick');
   if(!b || b.disabled) return;
   b.classList.add('press'); blip(b.dataset.snd||'act');
   const up = () => { b.classList.remove('press'); removeEventListener('pointerup',up); removeEventListener('pointercancel',up); };
@@ -750,13 +830,35 @@ window.CV = {
   soundOn(){ return st.sound; },
   audio(){ ac = ac || new (window.AudioContext||window.webkitAudioContext)(); return ac; },
   has(){ return strokes.some(x=>x.tool!=='clear'); },
-  img(){ const t=document.createElement('canvas'); t.width=600; t.height=400;
-    t.getContext('2d').drawImage(cv,0,0,600,400);
+  img(){ const t=document.createElement('canvas'); t.width=W/2; t.height=H/2;
+    t.getContext('2d').drawImage(cv,0,0,W/2,H/2);
     let u=t.toDataURL('image/webp',0.75); if(!u.startsWith('data:image/webp')) u=t.toDataURL('image/jpeg',0.75); return u; },
-  fit(){ fit(); }
+  fit(){ fit(); },
+  ar: H/W, phone: PHONE
 };
 /* ---------- 画面サイズに合わせる ---------- */
+function fitTate(){
+  // スマホ：上に縦長の紙、下に道具を横ならびで2段
+  const root = document.documentElement.style;
+  root.setProperty('--hd', '50px');
+  const mainEl = document.querySelector('main'), panels=[...document.querySelectorAll('.panel')];
+  panels.forEach(p=>p.style.height='');
+  const mw = mainEl.clientWidth, mh = mainEl.getBoundingClientRect().height;
+  const b = Math.floor(Math.max(34, Math.min(48, (mw - 26) / 6.8)));
+  root.setProperty('--b', b+'px'); root.setProperty('--gap', Math.round(b*0.16)+'px');
+  const tools = panels.reduce((t,p)=>t+p.getBoundingClientRect().height, 0) + 16;
+  let ph = Math.floor(mh - tools - 12), pw = Math.floor(ph*W/H);
+  if(pw > mw){ pw = mw; ph = Math.floor(pw*H/W); }
+  wrap.style.width = pw+'px'; wrap.style.height = ph+'px';
+  stage.style.height = (ph+10)+'px';
+}
+let fitting = false;
 function fit(){
+  if(fitting) return; fitting = true; requestAnimationFrame(()=>{ fitting=false; });
+  const tate = PHONE;
+  document.body.classList.toggle('tate', tate);
+  if(tate){ fitTate(); return; }
+  stage.style.height = '';
   const vh = window.innerHeight;
   const hd = Math.round(Math.min(72, Math.max(48, vh*0.085)));
   const root = document.documentElement.style;
@@ -796,6 +898,7 @@ addEventListener('contextmenu', e=>e.preventDefault());
 addEventListener('beforeunload', e=>{ if(window.GAME_ON){ e.preventDefault(); e.returnValue=''; } });
 document.addEventListener('gesturestart', e=>e.preventDefault());
 
+cv.width = W; cv.height = H;
 fit(); renderAll(); refreshStatus(); markColor();
 })();
 </script>
@@ -882,16 +985,47 @@ const MODE_NAME = {A:'おえかきリレー', B:'えとことばリレー', C:'�
 const spans = t => t.split(' ').map(w=>{ const s=document.createElement('span'); s.textContent=w; return s; });
 const fillWords = (el,t) => { el.innerHTML=''; spans(t).forEach(s=>el.appendChild(s)); };
 $('bigLogo').src = $('logo').src;
+if(CV.phone){                                   // スマホ：タイマーのボタンは数字だけにして1行に収める
+  document.querySelectorAll('[data-time]').forEach(b=>{ b.textContent = b.dataset.time==='0' ? 'なし' : b.dataset.time; });
+  document.querySelectorAll('.setup .lbl')[2].textContent='タイマー（びょう）';
+}
 
 /* ---------- じゅんび ---------- */
-const names = Array.from({length:10}, (_,i) => 'プレイヤー'+(i+1));
+/* なまえ：ブラウザに保存して、次も そのまま使う */
+const NK='oekaki-relay-names', DEF=i=>'プレイヤー'+(i+1);
+let names = Array.from({length:10}, (_,i) => DEF(i));
 let N = 4, mode = 'B', topicKind = 'easy', timeSec = 0, game = null;
+try{ const sv=JSON.parse(localStorage.getItem(NK));
+  if(sv && Array.isArray(sv.names)) sv.names.slice(0,10).forEach((n,i)=>{ if(typeof n==='string') names[i]=n; });
+  if(sv && sv.n>=3 && sv.n<=10) N=sv.n; }catch(e){}
+function saveNames(){ try{ localStorage.setItem(NK, JSON.stringify({names, n:N})); }catch(e){} }
+let ordering=false, picked=[];
 function renderNames(){
   const box = $('names'); box.innerHTML = '';
-  for(let i=0;i<N;i++){ const inp=document.createElement('input'); inp.maxLength=8; inp.value=names[i];
-    inp.oninput=()=>{ names[i]=inp.value; }; box.appendChild(inp); }
+  $('nOrder').textContent = ordering ? 'やめる' : 'じゅんばん'; $('nOrder').classList.toggle('on', ordering);
+  if(CV.phone){ $('nHint').classList.add('hide'); $('setupTitle').textContent = ordering ? 'じゅんばんに なまえを おしてね' : mode+'　'+MODE_NAME[mode]; }
+  else $('nHint').classList.toggle('hide', !ordering);
+  for(let i=0;i<N;i++){
+    if(ordering){                                 // おした じゅんばんに 番号がつく
+      const b=document.createElement('button'), k=picked.indexOf(i);
+      b.className='npick'+(k>=0?' on':''); b.dataset.snd='sel';
+      const no=document.createElement('i'); no.textContent = k>=0 ? k+1 : ''; b.appendChild(no);
+      b.appendChild(document.createTextNode(names[i].trim()||DEF(i)));
+      b.onclick=()=>{
+        if(k>=0) picked.splice(k,1); else picked.push(i);
+        if(picked.length===N){ const nw=picked.map(j=>names[j]); names.splice(0,N,...nw); ordering=false; picked=[]; saveNames(); }
+        renderNames();
+      };
+      box.appendChild(b);
+    }else{
+      const inp=document.createElement('input'); inp.maxLength=8; inp.value=names[i];
+      inp.oninput=()=>{ names[i]=inp.value; saveNames(); }; box.appendChild(inp);
+    }
+  }
   $('pNum').textContent = N;
 }
+$('nOrder').onclick = () => { ordering=!ordering; picked=[]; renderNames(); };
+$('nReset').onclick = () => { names = Array.from({length:10}, (_,i) => DEF(i)); ordering=false; picked=[]; saveNames(); renderNames(); };
 function setOpt(attr,val){ document.querySelectorAll(`[data-${attr}]`).forEach(b=>b.classList.toggle('on', b.dataset[attr]===String(val))); }
 document.querySelectorAll('[data-topic]').forEach(b=>b.onclick=()=>{ topicKind=b.dataset.topic; setOpt('topic',topicKind); $('tInput').classList.toggle('hide',topicKind!=='self'); });
 document.querySelectorAll('[data-time]').forEach(b=>b.onclick=()=>{ timeSec=+b.dataset.time; setOpt('time',timeSec); });
@@ -901,8 +1035,8 @@ document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{
   setOpt('topic',topicKind); setOpt('time',timeSec); $('tInput').classList.toggle('hide',topicKind!=='self');
   renderNames(); show('sSetup');
 });
-$('pMinus').onclick = () => { if(N>3){ N--; renderNames(); } };
-$('pPlus').onclick  = () => { if(N<10){ N++; renderNames(); } };
+$('pMinus').onclick = () => { if(N>3){ N--; ordering=false; picked=[]; saveNames(); renderNames(); } };
+$('pPlus').onclick  = () => { if(N<10){ N++; ordering=false; picked=[]; saveNames(); renderNames(); } };
 $('setupBack').onclick = () => show('sTitle');
 $('goFree').onclick = () => {
   game=null; setTask('じゆうにかく','すきな絵を かこう'); $('bDone').textContent='タイトルへ';
@@ -912,7 +1046,8 @@ $('goFree').onclick = () => {
 $('setupGo').onclick = () => {
   const topic = topicKind==='self' ? $('tInput').value.trim().replace(/\s+/g,' ') : makeTopic(topicKind);
   if(!topic){ $('tInput').focus(); return; }
-  game = {mode, topic, timer:timeSec, players:names.slice(0,N).map((n,i)=>n.trim()||('プレイヤー'+(i+1))), steps:[], i:0, date:Date.now()};
+  ordering=false; picked=[]; saveNames();
+  game = {mode, ar:CV.ar, topic, timer:timeSec, players:names.slice(0,N).map((n,i)=>n.trim()||('プレイヤー'+(i+1))), steps:[], i:0, date:Date.now()};
   $('tInput').value=''; window.GAME_ON=true;
   document.querySelectorAll('.dbg').forEach(e=>e.classList.add('hide'));
   toPass();
@@ -1059,13 +1194,14 @@ function layoutList(){
   const items=[{lab:'おだい',kind:'topic',text:R.topic}].concat(R.steps.map(s=>({lab:s.who,kind:s.type==='draw'?'img':'word',img:s.img,text:s.text})));
   const W=area.clientWidth, H=area.clientHeight, n=items.length, ag=40, vg=36, lab=24;
   let best=null;
+  const ar=R.ar||2/3;                       // 絵の縦横比（スマホは縦長）
   for(let cols=1;cols<=n;cols++){
     const rows=Math.ceil(n/cols);
     let cw=(W-(cols-1)*ag)/cols;
-    if(rows*(cw*2/3+lab)+(rows-1)*vg > H) cw=((H-(rows-1)*vg)/rows-lab)*1.5;
+    if(rows*(cw*ar+lab)+(rows-1)*vg > H) cw=((H-(rows-1)*vg)/rows-lab)/ar;
     if(!best || cw>best.cw) best={cols,rows,cw};
   }
-  const {cols,rows}=best, cw=Math.floor(best.cw), bh=Math.floor(cw*2/3), ch=bh+lab;
+  const {cols,rows}=best, cw=Math.floor(best.cw), bh=Math.floor(cw*ar), ch=bh+lab;
   const ox=(W-(cols*cw+(cols-1)*ag))/2, oy=(H-(rows*ch+(rows-1)*vg))/2;
   const pos=i=>{ const r=Math.floor(i/cols); let c=i%cols; if(r%2) c=cols-1-c; return {x:ox+c*(cw+ag), y:oy+r*(ch+vg), r}; };
   items.forEach((it,i)=>{
@@ -1094,7 +1230,7 @@ $('lsHome').onclick = () => show('sTitle');
 const HK='oekaki-relay-history';
 function loadHist(){ try{ return JSON.parse(localStorage.getItem(HK))||[]; }catch(e){ return []; } }
 function saveHist(g){
-  let h=loadHist(); h.unshift({mode:g.mode, topic:g.topic, players:g.players, steps:g.steps, date:g.date}); h=h.slice(0,5);
+  let h=loadHist(); h.unshift({mode:g.mode, ar:g.ar, topic:g.topic, players:g.players, steps:g.steps, date:g.date}); h=h.slice(0,5);
   while(h.length){ try{ localStorage.setItem(HK, JSON.stringify(h)); break; }catch(e){ h.pop(); } }
 }
 function openHist(){

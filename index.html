@@ -346,6 +346,17 @@ body.tate .lsTop{flex-wrap:wrap;gap:8px}
 body.tate .lsTop h2{width:100%;font-size:17px}
 body.tate .lsTop .spacer{display:none}
 body.tate .lsTop .wbtn{width:calc((100vw - 36px)/3);height:48px}
+.wbtn.nm{width:150px;height:48px;font-size:15px}
+.npick{height:40px;width:240px;border:3px solid var(--ink);border-radius:12px;background:#fff;box-shadow:0 3px 0 var(--ink);
+  font-family:var(--body);font-weight:900;font-size:16px;color:var(--ink);display:flex;align-items:center;gap:8px;padding:0 10px;
+  cursor:pointer;white-space:nowrap;overflow:hidden;transition:transform .06s ease-out,box-shadow .06s ease-out}
+.npick.press{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.npick i{font-style:normal;font-family:var(--title);width:24px;height:24px;border-radius:50%;background:#e9e6f5;color:#8a86a8;
+  display:flex;align-items:center;justify-content:center;font-size:13px;flex:none}
+.npick.on{background:var(--yellow)}
+.npick.on i{background:var(--ink);color:var(--yellow)}
+body.tate .names .npick{width:100%;height:34px;font-size:15px}
+body.tate .wbtn.nm{height:42px;font-size:14px;width:calc((100vw - 84px)/3)}
 </style>
 </head>
 <body>
@@ -437,7 +448,9 @@ body.tate .lsTop .wbtn{width:calc((100vw - 36px)/3);height:48px}
 
 <div class="screen" id="sSetup"><div class="card setup">
   <h2 id="setupTitle"></h2>
-  <div class="row center"><span class="lbl">にんずう</span><button class="wbtn sq" id="pMinus" data-snd="sel">−</button><b class="num" id="pNum">4</b><button class="wbtn sq" id="pPlus" data-snd="sel">＋</button></div>
+  <div class="row center"><span class="lbl">にんずう</span><button class="wbtn sq" id="pMinus" data-snd="sel">−</button><b class="num" id="pNum">4</b><button class="wbtn sq" id="pPlus" data-snd="sel">＋</button>
+    <button class="wbtn nm" id="nOrder" data-snd="sel">じゅんばん</button><button class="wbtn nm" id="nReset" data-snd="act">なまえリセット</button></div>
+  <p class="small hide" id="nHint">あたらしい じゅんばんに なまえを おしてね</p>
   <div class="names" id="names"></div>
   <div class="row center"><span class="lbl">おだい</span>
     <button class="wbtn opt" data-topic="easy" data-snd="sel">かんたん</button>
@@ -577,7 +590,7 @@ function blip(kind){
 
 /* ---------- ボタンの手触り（押しこみ＋おと） ---------- */
 document.addEventListener('pointerdown', e => {
-  const b = e.target.closest('.btn,.wbtn,.pc,.mode');
+  const b = e.target.closest('.btn,.wbtn,.pc,.mode,.npick');
   if(!b || b.disabled) return;
   b.classList.add('press'); blip(b.dataset.snd||'act');
   const up = () => { b.classList.remove('press'); removeEventListener('pointerup',up); removeEventListener('pointercancel',up); };
@@ -978,14 +991,41 @@ if(CV.phone){                                   // スマホ：タイマーの�
 }
 
 /* ---------- じゅんび ---------- */
-const names = Array.from({length:10}, (_,i) => 'プレイヤー'+(i+1));
+/* なまえ：ブラウザに保存して、次も そのまま使う */
+const NK='oekaki-relay-names', DEF=i=>'プレイヤー'+(i+1);
+let names = Array.from({length:10}, (_,i) => DEF(i));
 let N = 4, mode = 'B', topicKind = 'easy', timeSec = 0, game = null;
+try{ const sv=JSON.parse(localStorage.getItem(NK));
+  if(sv && Array.isArray(sv.names)) sv.names.slice(0,10).forEach((n,i)=>{ if(typeof n==='string') names[i]=n; });
+  if(sv && sv.n>=3 && sv.n<=10) N=sv.n; }catch(e){}
+function saveNames(){ try{ localStorage.setItem(NK, JSON.stringify({names, n:N})); }catch(e){} }
+let ordering=false, picked=[];
 function renderNames(){
   const box = $('names'); box.innerHTML = '';
-  for(let i=0;i<N;i++){ const inp=document.createElement('input'); inp.maxLength=8; inp.value=names[i];
-    inp.oninput=()=>{ names[i]=inp.value; }; box.appendChild(inp); }
+  $('nOrder').textContent = ordering ? 'やめる' : 'じゅんばん'; $('nOrder').classList.toggle('on', ordering);
+  if(CV.phone){ $('nHint').classList.add('hide'); $('setupTitle').textContent = ordering ? 'じゅんばんに なまえを おしてね' : mode+'　'+MODE_NAME[mode]; }
+  else $('nHint').classList.toggle('hide', !ordering);
+  for(let i=0;i<N;i++){
+    if(ordering){                                 // おした じゅんばんに 番号がつく
+      const b=document.createElement('button'), k=picked.indexOf(i);
+      b.className='npick'+(k>=0?' on':''); b.dataset.snd='sel';
+      const no=document.createElement('i'); no.textContent = k>=0 ? k+1 : ''; b.appendChild(no);
+      b.appendChild(document.createTextNode(names[i].trim()||DEF(i)));
+      b.onclick=()=>{
+        if(k>=0) picked.splice(k,1); else picked.push(i);
+        if(picked.length===N){ const nw=picked.map(j=>names[j]); names.splice(0,N,...nw); ordering=false; picked=[]; saveNames(); }
+        renderNames();
+      };
+      box.appendChild(b);
+    }else{
+      const inp=document.createElement('input'); inp.maxLength=8; inp.value=names[i];
+      inp.oninput=()=>{ names[i]=inp.value; saveNames(); }; box.appendChild(inp);
+    }
+  }
   $('pNum').textContent = N;
 }
+$('nOrder').onclick = () => { ordering=!ordering; picked=[]; renderNames(); };
+$('nReset').onclick = () => { names = Array.from({length:10}, (_,i) => DEF(i)); ordering=false; picked=[]; saveNames(); renderNames(); };
 function setOpt(attr,val){ document.querySelectorAll(`[data-${attr}]`).forEach(b=>b.classList.toggle('on', b.dataset[attr]===String(val))); }
 document.querySelectorAll('[data-topic]').forEach(b=>b.onclick=()=>{ topicKind=b.dataset.topic; setOpt('topic',topicKind); $('tInput').classList.toggle('hide',topicKind!=='self'); });
 document.querySelectorAll('[data-time]').forEach(b=>b.onclick=()=>{ timeSec=+b.dataset.time; setOpt('time',timeSec); });
@@ -995,8 +1035,8 @@ document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{
   setOpt('topic',topicKind); setOpt('time',timeSec); $('tInput').classList.toggle('hide',topicKind!=='self');
   renderNames(); show('sSetup');
 });
-$('pMinus').onclick = () => { if(N>3){ N--; renderNames(); } };
-$('pPlus').onclick  = () => { if(N<10){ N++; renderNames(); } };
+$('pMinus').onclick = () => { if(N>3){ N--; ordering=false; picked=[]; saveNames(); renderNames(); } };
+$('pPlus').onclick  = () => { if(N<10){ N++; ordering=false; picked=[]; saveNames(); renderNames(); } };
 $('setupBack').onclick = () => show('sTitle');
 $('goFree').onclick = () => {
   game=null; setTask('じゆうにかく','すきな絵を かこう'); $('bDone').textContent='タイトルへ';
@@ -1006,6 +1046,7 @@ $('goFree').onclick = () => {
 $('setupGo').onclick = () => {
   const topic = topicKind==='self' ? $('tInput').value.trim().replace(/\s+/g,' ') : makeTopic(topicKind);
   if(!topic){ $('tInput').focus(); return; }
+  ordering=false; picked=[]; saveNames();
   game = {mode, ar:CV.ar, topic, timer:timeSec, players:names.slice(0,N).map((n,i)=>n.trim()||('プレイヤー'+(i+1))), steps:[], i:0, date:Date.now()};
   $('tInput').value=''; window.GAME_ON=true;
   document.querySelectorAll('.dbg').forEach(e=>e.classList.add('hide'));
