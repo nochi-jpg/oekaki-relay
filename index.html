@@ -6,7 +6,7 @@
 <title>おえかきリレー｜キャンバス試作</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Klee+One:wght@600&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
   --ink:#1f1c3d;
@@ -21,6 +21,7 @@
   --hd:64px;     /* ヘッダーの高さ */
   --gap:10px;
   --title:'Dela Gothic One','Hiragino Sans','Meiryo',sans-serif;
+  --kyo:'UD デジタル 教科書体 N-B','UD Digi Kyokasho N-B','UD デジタル 教科書体 NK-B','UD Digi Kyokasho NK-B','Klee One',serif;
   --body:'Zen Maru Gothic','Hiragino Maru Gothic ProN','Meiryo',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -277,6 +278,9 @@ main{display:grid;grid-template-columns:auto 1fr auto;gap:14px;min-height:0}
 .lc .bx span{display:inline-block;margin:0 .1em}
 .arw{position:absolute;width:28px;height:28px;color:var(--yellow)}
 .wbtn.hist{width:460px}
+/* お題・ことばは読みやすい教科書体 */
+.prBig,.taskbox b,.rbox .say,.lc .bx.topic,.lc .bx.word{font-family:var(--kyo);font-weight:700}
+.taskbox b{font-size:calc(var(--hd)*.5)}
 </style>
 </head>
 <body>
